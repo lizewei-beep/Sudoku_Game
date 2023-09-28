@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-def is_valid(board, row, col, num):
+def is_valid(board, row, col, num):  #检查数字在该位置是否有效
     for x in range(9):
         if board[row][x] == num:
             return False
@@ -21,7 +21,7 @@ def is_valid(board, row, col, num):
     return True
 
 
-def solve(board, row=0, col=0):
+def solve(board, row=0, col=0):# 解决数独问题
     if row == 9:
         row = 0
         if col + 1 == 9:
@@ -41,7 +41,7 @@ def solve(board, row=0, col=0):
     return False
 
 
-def generate_sudoku(difficulty):
+def generate_sudoku(difficulty):# 生成数独问题
     board = [[0] * 9 for _ in range(9)]
     for i in range(9):
         for j in range(9):
@@ -63,8 +63,8 @@ def generate_sudoku(difficulty):
 
 class SudokuGUI:
     def __init__(self):
-        self.root = tk.Tk()
-        self.root.title("Sudoku Generator and Solver")
+        self.root = tk.Tk() # 创建根窗口
+        self.root.title("数独生成器") # 设置标题
 
         # 创建用于显示数独和解答的标签网格
         self.sudoku_cells = [[{
@@ -115,7 +115,7 @@ class SudokuGUI:
         )
         self.prev_button.grid(row=7, column=0)
 
-    def generate_sudokus(self):
+    def generate_sudokus(self): # 生成数独问题并展示第一个数独问题
         difficulty = self.difficulty_entry.get()
 
         with ThreadPoolExecutor() as executor:
@@ -129,14 +129,14 @@ class SudokuGUI:
         self.current_board = 0
         self.display_board()
 
-    def clear_board(self):
+    def clear_board(self):# 清空界面上的数独问题
         for i in range(9):
             for j in range(3, 12):
                 cell = self.sudoku_cells[i][j]
                 cell["value"].set(" ")
                 cell["label"].configure(bg="white")
 
-    def display_board(self):
+    def display_board(self):# 显示当前的数独问题
         self.clear_board()
         board = self.boards[self.current_board]
 
@@ -149,15 +149,15 @@ class SudokuGUI:
                 if cell_value != 0:
                     cell["label"].configure(bg="lightgray")
 
-    def next_sudoku(self):
+    def next_sudoku(self):# 显示下一个数独问题
         self.current_board = (self.current_board + 1) % len(self.boards)
         self.display_board()
 
-    def prev_sudoku(self):
+    def prev_sudoku(self):# 显示前一个数独问题
         self.current_board = (self.current_board - 1) % len(self.boards)
         self.display_board()
 
-    def display_solution(self):
+    def display_solution(self):# 显示当前数独问题的解
         board_to_solve = copy.deepcopy(self.boards[self.current_board])
         solve(board_to_solve)
 
@@ -174,9 +174,9 @@ if __name__ == "__main__":
     gui = SudokuGUI()
     gui.run()
     difficulty = input("Please select a difficulty (high or low): ")
-    num_batches = int(input("How many batches of Sudoku puzzles would you like to generate? "))
+    num_batches = int(input("How many batches of Sudoku puzzles would you like to generate? "))# 生成数独问题的批次,由于显示问题该功能最终被废弃
 
-    for batch in range(num_batches):
+    for batch in range(num_batches):# 生成并导出数独问题到文件，同样由于一系列问题不得不放弃文件导入本地功能
         with ThreadPoolExecutor() as executor:
             results = list(executor.map(generate_sudoku, [difficulty] * 9))
 
@@ -189,7 +189,6 @@ if __name__ == "__main__":
 
             with open(f"sudoku_{batch + 1}_{index}.txt", "w") as file:
                 file.write(sudoku_board)
-
 
 
 
